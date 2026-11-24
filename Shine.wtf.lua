@@ -12190,7 +12190,6 @@ modules.module_B = function()
     G.shown = false
     G.armed = false
     G.fade = nil
-    G.visAt, G.visNow = nil, nil
   end
   Y.bind = function(G, i)
     G:clear()
@@ -12281,50 +12280,6 @@ modules.module_B = function()
       end
     end
   end
-  local visParams = RaycastParams.new()
-  visParams.FilterType = Enum.RaycastFilterType.Exclude
-  visParams.IgnoreWater = true
-  local visFilter, VIS_PARTS = {}, {"Head", "UpperTorso", "Torso", "HumanoidRootPart"}
-  Y.vis_state = function(G)
-    local char = G.charRef
-    if not (char) or not (char.Parent) then
-      return false
-    end
-    local now = os.clock()
-    if G.visAt and (now - G.visAt) < 0.1 then
-      return G.visNow == true
-    end
-    G.visAt = now
-    local cam = t.CurrentCamera
-    if not (cam) then
-      G.visNow = false
-      return false
-    end
-    table.clear(visFilter)
-    local me = Z.Character
-    if me and me.Parent then
-      visFilter[1] = me
-    end
-    visParams.FilterDescendantsInstances = visFilter
-    local origin = cam.CFrame.Position
-    local seen, checked = false, 0
-    for index = 1, #VIS_PARTS do
-      local part = char:FindFirstChild(VIS_PARTS[index])
-      if part and part:IsA("BasePart") then
-        checked += 1
-        local result = t:Raycast(origin, part.Position - origin, visParams)
-        if (not result) or (result.Instance == part) or result.Instance:IsDescendantOf(char) then
-          seen = true
-          break
-        end
-      end
-    end
-    if checked == 0 then
-      seen = true
-    end
-    G.visNow = seen
-    return seen
-  end
   Y.update = function(G)
     local i = G.itf
     local t = j.shared_for(i, G.plr)
@@ -12379,12 +12334,7 @@ modules.module_B = function()
     if not (G.shown) then
       G:set_shown(true)
     end
-    if j.chamsMode == "visibility" then
-      local seen = G:vis_state()
-      i = u.parse_col(G, (if seen then j.chamsVisCol[1] else j.chamsOccCol[1])) or h
-    else
-      i = u.parse_col(G, j.chamsOCol[1]) or h
-    end
+    i = u.parse_col(G, j.chamsOCol[1]) or h
     t = O(i, m(j))
     if G.fill_col ~= i then
       G:recolor(i, t)
@@ -12671,7 +12621,7 @@ end
 
 -- Module 31/103: module_E (original VM key: E)
 modules.module_E = function()
-  return {shSet = {tSz = 13, tFnt = 3, limDis = false, maxDis = 150, useTeam = false}, allowlocal = false, tSet = {en = {en = false, dPos = "bottom", wPos = "bottom", monPos = "right", pnPos = "right", armMax = 100, box = false, boxType = "Static", boxCol = {Color3.new(1, 0, 0), 1}, boxO = true, boxOCol = {Color3.new(), 1}, boxF = false, boxFCol = {Color3.new(1, 0, 0), 0.5}, boxGrd = false, boxGrdCol = {Color3.new(1, 0, 0), Color3.new(0, 0, 1)}, boxFGrd = false, boxFGrdCol = {Color3.new(1, 0, 0), Color3.new(0, 0, 1)}, hb = false, hbSide = "left", hlCol = Color3.new(0, 1, 0), dyCol = Color3.new(1, 0, 0), hbo = true, hboCol = {Color3.new(), 0.5}, hbCol = {Color3.new(0, 1, 0), 1}, hbGrd = false, hbGrdCol = {Color3.new(0, 1, 0), Color3.new(1, 0, 0)}, ht = false, htCol = {Color3.new(1, 1, 1), 1}, htOut = true, htOCol = Color3.new(), htGrd = false, htGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, ab = false, abSide = "right", abCol = {Color3.fromRGB(0, 150, 255), 1}, abo = true, aboCol = {Color3.new(), 0.5}, abGrd = false, abGrdCol = {Color3.fromRGB(0, 150, 255), Color3.fromRGB(0, 60, 200)}, at = false, atCol = {Color3.new(1, 1, 1), 1}, atOut = true, atOCol = Color3.new(), b3d = false, b3dCol = {Color3.new(1, 0, 0), 1}, name = false, nCol = {Color3.new(1, 1, 1), 1}, nOut = true, nOCol = Color3.new(), nGrd = false, nGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, av = false, wep = false, wCol = {Color3.new(1, 1, 1), 1}, wOut = true, wOCol = Color3.new(), wGrd = false, wGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, wepIcon = false, wepIconCol = {Color3.new(1, 1, 1), 1}, wepIconPos = "bottom", wepIconSz = 16, mon = false, monCol = {Color3.new(1, 1, 1), 1}, monOut = true, monOCol = Color3.new(), monGrd = false, monGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, pn = false, pnCol = {Color3.new(1, 1, 1), 1}, pnOut = true, pnOCol = Color3.new(), pnGrd = false, pnGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, bomb = false, bombCol = {Color3.fromRGB(255, 95, 70), 1}, bombGrd = false, bombGrdCol = {Color3.fromRGB(255, 95, 70), Color3.fromRGB(255, 95, 70)}, bombPos = "right", scope = false, scopeCol = {Color3.fromRGB(90, 170, 255), 1}, scopeGrd = false, scopeGrdCol = {Color3.fromRGB(90, 170, 255), Color3.fromRGB(90, 170, 255)}, scopePos = "right", flashed = false, flashedCol = {Color3.fromRGB(255, 220, 70), 1}, flashedGrd = false, flashedGrdCol = {Color3.fromRGB(255, 220, 70), Color3.fromRGB(255, 220, 70)}, flashedPos = "right", defuse = false, defuseCol = {Color3.fromRGB(90, 220, 255), 1}, defuseGrd = false, defuseGrdCol = {Color3.fromRGB(90, 220, 255), Color3.fromRGB(90, 220, 255)}, defusePos = "right", dis = false, dCol = {Color3.new(1, 1, 1), 1}, dOut = true, dOCol = Color3.new(), dGrd = false, dGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, tr = false, trOrg = "Bottom", trCol = {Color3.new(1, 0, 0), 1}, tro = true, troCol = {Color3.new(), 1}, offAr = false, offArCol = {Color3.new(1, 1, 1), 1}, offArSz = 22, offArPad = 18, offArSmooth = 0.08, chams = false, chamsGlow = 4, chamsFCol = {Color3.new(1, 1, 1), 0.5}, chamsOCol = {Color3.new(1, 1, 1), 0}, chamsMode = "static", chamsVisCol = {Color3.fromRGB(60, 220, 100), 0.5}, chamsOccCol = {Color3.fromRGB(235, 80, 80), 0.5}, chamsWall = false, chamsFWCol = {Color3.fromRGB(20, 20, 20), 0.5}, chamsOWCol = {Color3.new(), 0}, matChams = false, matChamsType = "ForceField", matChamsStyle = "Chromatic", matChamsCol = Color3.new(1, 1, 1), matChamsVisCol = {Color3.new(1, 1, 1), 0}, matChamsOccCol = {Color3.new(0.3, 0.3, 0.3), 0}, hlt = false, hltFCol = {Color3.new(1, 1, 1), 0.5}, hltOCol = {Color3.new(1, 1, 1), 1}, skel = false, skelCol = {Color3.new(1, 1, 1), 1}, gskel = false, gskelCol = {Color3.new(1, 0, 0), 0.5}}, fr = {en = false, box = false, boxCol = {Color3.new(0, 1, 0), 1}, boxO = true, boxOCol = {Color3.new(), 1}, boxF = false, boxFCol = {Color3.new(0, 1, 0), 0.5}, hb = false, hlCol = Color3.new(0, 1, 0), dyCol = Color3.new(1, 0, 0), hbo = true, hboCol = {Color3.new(), 0.5}, ht = false, htCol = {Color3.new(1, 1, 1), 1}, htOut = true, htOCol = Color3.new(), b3d = false, b3dCol = {Color3.new(0, 1, 0), 1}, name = false, nCol = {Color3.new(1, 1, 1), 1}, nOut = true, nOCol = Color3.new(), wep = false, wCol = {Color3.new(1, 1, 1), 1}, wOut = true, wOCol = Color3.new(), wepIcon = false, wepIconCol = {Color3.new(1, 1, 1), 1}, wepIconPos = "bottom", wepIconSz = 16, bomb = false, bombCol = {Color3.fromRGB(255, 95, 70), 1}, bombGrd = false, bombGrdCol = {Color3.fromRGB(255, 95, 70), Color3.fromRGB(255, 95, 70)}, bombPos = "right", scope = false, scopeCol = {Color3.fromRGB(90, 170, 255), 1}, scopeGrd = false, scopeGrdCol = {Color3.fromRGB(90, 170, 255), Color3.fromRGB(90, 170, 255)}, scopePos = "right", flashed = false, flashedCol = {Color3.fromRGB(255, 220, 70), 1}, flashedGrd = false, flashedGrdCol = {Color3.fromRGB(255, 220, 70), Color3.fromRGB(255, 220, 70)}, flashedPos = "right", defuse = false, defuseCol = {Color3.fromRGB(90, 220, 255), 1}, defuseGrd = false, defuseGrdCol = {Color3.fromRGB(90, 220, 255), Color3.fromRGB(90, 220, 255)}, defusePos = "right", dis = false, dCol = {Color3.new(1, 1, 1), 1}, dOut = true, dOCol = Color3.new(), tr = false, trOrg = "Bottom", trCol = {Color3.new(0, 1, 0), 1}, tro = true, troCol = {Color3.new(), 1}, offAr = false, offArCol = {Color3.new(1, 1, 1), 1}, offArSz = 22, offArPad = 18, offArSmooth = 0.08, chams = false, chamsGlow = 4, chamsFCol = {Color3.new(1, 1, 1), 0.5}, chamsOCol = {Color3.new(1, 1, 1), 0}, chamsMode = "static", chamsVisCol = {Color3.fromRGB(60, 220, 100), 0.5}, chamsOccCol = {Color3.fromRGB(235, 80, 80), 0.5}, chamsWall = false, chamsFWCol = {Color3.fromRGB(20, 20, 20), 0.5}, chamsOWCol = {Color3.new(), 0}, matChams = false, matChamsType = "ForceField", matChamsStyle = "Chromatic", matChamsCol = Color3.new(1, 1, 1), matChamsVisCol = {Color3.new(1, 1, 1), 0}, matChamsOccCol = {Color3.new(0.3, 0.3, 0.3), 0}, hlt = false, hltFCol = {Color3.new(1, 1, 1), 0.5}, hltOCol = {Color3.new(1, 1, 1), 1}}}}
+  return {shSet = {tSz = 13, tFnt = 3, limDis = false, maxDis = 150, useTeam = false}, allowlocal = false, tSet = {en = {en = false, dPos = "bottom", wPos = "bottom", monPos = "right", pnPos = "right", armMax = 100, box = false, boxType = "Static", boxCol = {Color3.new(1, 0, 0), 1}, boxO = true, boxOCol = {Color3.new(), 1}, boxF = false, boxFCol = {Color3.new(1, 0, 0), 0.5}, boxGrd = false, boxGrdCol = {Color3.new(1, 0, 0), Color3.new(0, 0, 1)}, boxFGrd = false, boxFGrdCol = {Color3.new(1, 0, 0), Color3.new(0, 0, 1)}, hb = false, hbSide = "left", hlCol = Color3.new(0, 1, 0), dyCol = Color3.new(1, 0, 0), hbo = true, hboCol = {Color3.new(), 0.5}, hbCol = {Color3.new(0, 1, 0), 1}, hbGrd = false, hbGrdCol = {Color3.new(0, 1, 0), Color3.new(1, 0, 0)}, ht = false, htCol = {Color3.new(1, 1, 1), 1}, htOut = true, htOCol = Color3.new(), htGrd = false, htGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, ab = false, abSide = "right", abCol = {Color3.fromRGB(0, 150, 255), 1}, abo = true, aboCol = {Color3.new(), 0.5}, abGrd = false, abGrdCol = {Color3.fromRGB(0, 150, 255), Color3.fromRGB(0, 60, 200)}, at = false, atCol = {Color3.new(1, 1, 1), 1}, atOut = true, atOCol = Color3.new(), b3d = false, b3dCol = {Color3.new(1, 0, 0), 1}, name = false, nCol = {Color3.new(1, 1, 1), 1}, nOut = true, nOCol = Color3.new(), nGrd = false, nGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, av = false, wep = false, wCol = {Color3.new(1, 1, 1), 1}, wOut = true, wOCol = Color3.new(), wGrd = false, wGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, wepIcon = false, wepIconCol = {Color3.new(1, 1, 1), 1}, wepIconPos = "bottom", wepIconSz = 16, mon = false, monCol = {Color3.new(1, 1, 1), 1}, monOut = true, monOCol = Color3.new(), monGrd = false, monGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, pn = false, pnCol = {Color3.new(1, 1, 1), 1}, pnOut = true, pnOCol = Color3.new(), pnGrd = false, pnGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, bomb = false, bombCol = {Color3.fromRGB(255, 95, 70), 1}, bombGrd = false, bombGrdCol = {Color3.fromRGB(255, 95, 70), Color3.fromRGB(255, 95, 70)}, bombPos = "right", scope = false, scopeCol = {Color3.fromRGB(90, 170, 255), 1}, scopeGrd = false, scopeGrdCol = {Color3.fromRGB(90, 170, 255), Color3.fromRGB(90, 170, 255)}, scopePos = "right", flashed = false, flashedCol = {Color3.fromRGB(255, 220, 70), 1}, flashedGrd = false, flashedGrdCol = {Color3.fromRGB(255, 220, 70), Color3.fromRGB(255, 220, 70)}, flashedPos = "right", defuse = false, defuseCol = {Color3.fromRGB(90, 220, 255), 1}, defuseGrd = false, defuseGrdCol = {Color3.fromRGB(90, 220, 255), Color3.fromRGB(90, 220, 255)}, defusePos = "right", dis = false, dCol = {Color3.new(1, 1, 1), 1}, dOut = true, dOCol = Color3.new(), dGrd = false, dGrdCol = {Color3.new(1, 1, 1), Color3.new(1, 0, 0)}, tr = false, trOrg = "Bottom", trCol = {Color3.new(1, 0, 0), 1}, tro = true, troCol = {Color3.new(), 1}, offAr = false, offArCol = {Color3.new(1, 1, 1), 1}, offArSz = 22, offArPad = 18, offArSmooth = 0.08, chams = false, chamsGlow = 4, chamsFCol = {Color3.new(1, 1, 1), 0.5}, chamsOCol = {Color3.new(1, 1, 1), 0}, chamsWall = false, chamsFWCol = {Color3.fromRGB(20, 20, 20), 0.5}, chamsOWCol = {Color3.new(), 0}, matChams = false, matChamsType = "ForceField", matChamsStyle = "Chromatic", matChamsCol = Color3.new(1, 1, 1), matChamsVisCol = {Color3.new(1, 1, 1), 0}, matChamsOccCol = {Color3.new(0.3, 0.3, 0.3), 0}, hlt = false, hltFCol = {Color3.new(1, 1, 1), 0.5}, hltOCol = {Color3.new(1, 1, 1), 1}, skel = false, skelCol = {Color3.new(1, 1, 1), 1}, gskel = false, gskelCol = {Color3.new(1, 0, 0), 0.5}}, fr = {en = false, box = false, boxCol = {Color3.new(0, 1, 0), 1}, boxO = true, boxOCol = {Color3.new(), 1}, boxF = false, boxFCol = {Color3.new(0, 1, 0), 0.5}, hb = false, hlCol = Color3.new(0, 1, 0), dyCol = Color3.new(1, 0, 0), hbo = true, hboCol = {Color3.new(), 0.5}, ht = false, htCol = {Color3.new(1, 1, 1), 1}, htOut = true, htOCol = Color3.new(), b3d = false, b3dCol = {Color3.new(0, 1, 0), 1}, name = false, nCol = {Color3.new(1, 1, 1), 1}, nOut = true, nOCol = Color3.new(), wep = false, wCol = {Color3.new(1, 1, 1), 1}, wOut = true, wOCol = Color3.new(), wepIcon = false, wepIconCol = {Color3.new(1, 1, 1), 1}, wepIconPos = "bottom", wepIconSz = 16, bomb = false, bombCol = {Color3.fromRGB(255, 95, 70), 1}, bombGrd = false, bombGrdCol = {Color3.fromRGB(255, 95, 70), Color3.fromRGB(255, 95, 70)}, bombPos = "right", scope = false, scopeCol = {Color3.fromRGB(90, 170, 255), 1}, scopeGrd = false, scopeGrdCol = {Color3.fromRGB(90, 170, 255), Color3.fromRGB(90, 170, 255)}, scopePos = "right", flashed = false, flashedCol = {Color3.fromRGB(255, 220, 70), 1}, flashedGrd = false, flashedGrdCol = {Color3.fromRGB(255, 220, 70), Color3.fromRGB(255, 220, 70)}, flashedPos = "right", defuse = false, defuseCol = {Color3.fromRGB(90, 220, 255), 1}, defuseGrd = false, defuseGrdCol = {Color3.fromRGB(90, 220, 255), Color3.fromRGB(90, 220, 255)}, defusePos = "right", dis = false, dCol = {Color3.new(1, 1, 1), 1}, dOut = true, dOCol = Color3.new(), tr = false, trOrg = "Bottom", trCol = {Color3.new(0, 1, 0), 1}, tro = true, troCol = {Color3.new(), 1}, offAr = false, offArCol = {Color3.new(1, 1, 1), 1}, offArSz = 22, offArPad = 18, offArSmooth = 0.08, chams = false, chamsGlow = 4, chamsFCol = {Color3.new(1, 1, 1), 0.5}, chamsOCol = {Color3.new(1, 1, 1), 0}, chamsWall = false, chamsFWCol = {Color3.fromRGB(20, 20, 20), 0.5}, chamsOWCol = {Color3.new(), 0}, matChams = false, matChamsType = "ForceField", matChamsStyle = "Chromatic", matChamsCol = Color3.new(1, 1, 1), matChamsVisCol = {Color3.new(1, 1, 1), 0}, matChamsOccCol = {Color3.new(0.3, 0.3, 0.3), 0}, hlt = false, hltFCol = {Color3.new(1, 1, 1), 0.5}, hltOCol = {Color3.new(1, 1, 1), 1}}}}
 end
 
 -- Module 32/103: module_F (original VM key: F)
@@ -15161,17 +15111,7 @@ modules.module_L = function()
     A.chamsOCol[1] = j
     A.chamsFCol[1] = j
   end})
-  local chamsSet = i:settings()
-  chamsSet:slider({name = "brightness", flag = "vis.chamsglow", min = 1, max = 12, dec = 1, default = 4, cb = x("chamsGlow")})
-  chamsSet:dropdown({name = "mode", flag = "vis.chamsmode", values = {"static", "visibility"}, default = "static", cb = function(j)
-    A.chamsMode = j
-  end})
-  chamsSet:color({name = "visible", flag = "vis.chamsviscol", default = Color3.fromRGB(60, 220, 100), cb = function(j)
-    A.chamsVisCol[1] = j
-  end})
-  chamsSet:color({name = "hidden", flag = "vis.chamsocccol", default = Color3.fromRGB(235, 80, 80), cb = function(j)
-    A.chamsOccCol[1] = j
-  end})
+  i:settings():slider({name = "brightness", flag = "vis.chamsglow", min = 1, max = 12, dec = 1, default = 4, cb = x("chamsGlow")})
   i = W:toggle({name = "highlight", flag = "vis.hlt", cb = x("hlt")}):dep(D):settings()
   i:colorpicker({name = "fill", flag = "vis.hltfcol", default = Z, alpha = 0.5, cb = function(j, m)
     A.hltFCol[1], A.hltFCol[2] = j, m
